@@ -17,14 +17,12 @@ class Controller:
         except (ValueError, TypeError):
             self._view.show_alert("Inserisci un valore numerico nel campo anno.")
             return
-
         if year_n < 1950 or year_n > 2024:
             self._view.show_alert("Inserisci un valore compreso tra 1950 e 2024.")
             return
 
         # costruisce il grafo con il model
-        self._model.build_graph(year_n)
-
+        self._model.build_graph(year_n)   #in output ho il grafo(self.G) correlato a tale anno
         # aggiorna l'area risultati
         self._view.lista_visualizzazione.controls.clear()
         # uso il metodo corretto per il numero di componenti
@@ -32,12 +30,12 @@ class Controller:
         self._view.lista_visualizzazione.controls.append(
             ft.Text(f"Il grafo ha {num_cc} componenti connesse."))
         self._view.lista_visualizzazione.controls.append(ft.Text("Di seguito il dettaglio sui nodi:"))
-
         for n in self._model.get_nodes():
             # n è un oggetto rifugio; usiamo .nome come rappresentazione
             grado = self._model.get_num_neighbors(n)
             self._view.lista_visualizzazione.controls.append(ft.Text(f"{n} -- {grado} vicini."))
-
+        self._view.lista_visualizzazione.update()
+        '''
         # abilita dropdown e bottone raggiungibili (se erano disabilitati)
         self._view.dd_rifugio.disabled = False
         self._view.pulsante_raggiungibili.disabled = False
@@ -69,7 +67,7 @@ class Controller:
 
         for r in all_rifugi:
             # Solo text e data: value non serve
-            option = ft.dropdown.Option(text=r.nome, data=r)
+            option = ft.dropdown.Option(text=r.nome)
             self._view.dd_rifugio.options.append(option)
 
         # aggiorna il dropdown
@@ -95,3 +93,4 @@ class Controller:
 
         self._current_rifugio = found
         print("Rifugio selezionato:", self._current_rifugio)
+        '''

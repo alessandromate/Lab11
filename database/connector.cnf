@@ -1,6 +1,6 @@
 [client]
+host=localhost
+port=3306
 user=root
 password=
-host=127.0.0.1
 database=mountain_paths
-raise_on_warnings=True
