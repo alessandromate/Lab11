@@ -30,25 +30,23 @@ class View:
             on_click=self.controller.handle_calcola,
             width=200)
         row1 = ft.Row([self.txt_anno, pulsante_calcola], alignment=ft.MainAxisAlignment.CENTER)
-        '''
+
         # Riga 2 con dropdown rifugio e pulsante raggiungibili
         self.dd_rifugio = ft.Dropdown(
             label="Rifugio",
-            disabled=True,
             width=300,
             on_change=self.controller.read_dd_rifugio if self.controller else None
         )
-        
+
         self.pulsante_raggiungibili = ft.ElevatedButton(
             text="Rifugi raggiungibili",
             on_click=self.controller.handle_raggiungibili if self.controller else None,
-            disabled=True,
             width=200
         )
         row2 = ft.Row([self.dd_rifugio, self.pulsante_raggiungibili], alignment=ft.MainAxisAlignment.CENTER)
-        '''
+
         # ListView dove stampare i risultati
-        self.lista_visualizzazione = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=False)
+        self.lista_visualizzazione = ft.ListView(expand=10, spacing=20, auto_scroll=False)
 
         # --- Toggle Tema ---
         self.toggle_cambia_tema = ft.Switch(label="Tema scuro", value=True, on_change=self.cambia_tema)
@@ -62,12 +60,10 @@ class View:
             ft.Divider(),
 
             row1,
-            #row2,
-
+            row2,
             ft.Divider(),
             self.lista_visualizzazione
         )
-
         self.page.scroll = "adaptive"
         self.page.update()
 

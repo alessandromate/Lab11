@@ -15,19 +15,19 @@ class Model:
         :param year: anno limite fino al quale selezionare le connessioni da includere.
         """
         self.rifugi = DAO.get_all_rifugi(year)
+        print(f' rifugi: {self.rifugi}')
         self.connessioni = DAO.get_connessioni(year, self.rifugi)
+        print(f' connessioni: {self.connessioni}')
+
         self.G.clear()
         self.G.add_nodes_from(self.rifugi.values())
         for connection in self.connessioni.values():
             self.G.add_edge(connection.r1, connection.r2)
-
         return self.G
 
     def get_nodes(self):
         """Restituisce la lista dei rifugi presenti nel grafo.:return: lista dei rifugi presenti nel grafo."""
         nodi = list(self.G.nodes)
-        for n in nodi:
-            print(n)
         return nodi
 
     def get_num_neighbors(self, node):  #in input il nodo di cui voglio i vicini

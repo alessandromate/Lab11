@@ -21,27 +21,19 @@ class Controller:
             self._view.show_alert("Inserisci un valore compreso tra 1950 e 2024.")
             return
 
-        # costruisce il grafo con il model
-        self._model.build_graph(year_n)   #in output ho il grafo(self.G) correlato a tale anno
-        # aggiorna l'area risultati
+        self._model.build_graph(year_n)
         self._view.lista_visualizzazione.controls.clear()
-        # uso il metodo corretto per il numero di componenti
         num_cc = self._model.get_num_connected_components()
         self._view.lista_visualizzazione.controls.append(
             ft.Text(f"Il grafo ha {num_cc} componenti connesse."))
         self._view.lista_visualizzazione.controls.append(ft.Text("Di seguito il dettaglio sui nodi:"))
         for n in self._model.get_nodes():
-            # n è un oggetto rifugio; usiamo .nome come rappresentazione
             grado = self._model.get_num_neighbors(n)
             self._view.lista_visualizzazione.controls.append(ft.Text(f"{n} -- {grado} vicini."))
         self._view.lista_visualizzazione.update()
-        '''
-        # abilita dropdown e bottone raggiungibili (se erano disabilitati)
-        self._view.dd_rifugio.disabled = False
-        self._view.pulsante_raggiungibili.disabled = False
 
-        # riempie il dropdown con i rifugi attuali
         self._fill_dropdown()
+
         self._view.update()
 
     def handle_raggiungibili(self, e):
@@ -49,48 +41,43 @@ class Controller:
         if self._current_rifugio is None:
             self._view.show_alert("Seleziona prima un rifugio dal menu a tendina.")
             return
+        print(self._current_rifugio)
+        node=""
+        for n in self._model.G.nodes:
+            if n.id == int(self._current_rifugio):
+                node = n
+        print(f'questo è il nodo {node}')
+        raggiungibili = self._model.get_reachable(node)
+        print(f'questi sono i nodi raggiungibili : {raggiungibili} ')
 
-        raggiungibili = self._model.get_reachable(self._current_rifugio)
+        #raggiungibili.sort(key=lambda x: x.peso, reverse=True)
+
         self._view.lista_visualizzazione.controls.clear()
         self._view.lista_visualizzazione.controls.append(
-            ft.Text(f"Da '{self._current_rifugio.nome}' è possibile raggiungere a piedi {len(raggiungibili)} rifugi:"))
-        for r in raggiungibili:
-            # supponiamo che l'oggetto r abbia attributo nome
-            self._view.lista_visualizzazione.controls.append(ft.Text(f"{r}"))
+            ft.Text(f"Da '{node.nome}' è possibile raggiungere a piedi {len(raggiungibili)} rifugi:"))
 
+        for r in raggiungibili:
+            self._view.lista_visualizzazione.controls.append(ft.Text(f"{r}"))
+            self._view.update()
         self._view.update()
 
     def _fill_dropdown(self):
         """Popola il dropdown con i rifugi presenti nel grafo."""
         self._view.dd_rifugio.options.clear()
         all_rifugi = self._model.get_nodes()
-
+        print(f'tutti i rifugi {all_rifugi}')
         for r in all_rifugi:
-            # Solo text e data: value non serve
-            option = ft.dropdown.Option(text=r.nome)
-            self._view.dd_rifugio.options.append(option)
+            self._view.dd_rifugio.options.append(ft.dropdown.Option(key=  r.id, text=r.nome))
 
-        # aggiorna il dropdown
         self._view.dd_rifugio.update()
-
-        # Associa callback on_change sul Dropdown (non sulle singole Option)
-        self._view.dd_rifugio.on_change = self.read_dd_rifugio
 
     def read_dd_rifugio(self, e):
         """Callback chiamato quando si seleziona un'opzione nel dropdown."""
-
         selected_option = e.control.value
-        if selected_option is None:
-            self._current_rifugio = None
-            return
+        print(f' id rifugio selezionato {selected_option} ')
 
-        # selected_option è una stringa? in Flet moderno spesso è text, quindi cerchiamo l'oggetto data corrispondente
-        found = None
-        for opt in e.control.options:
-            if opt.text == selected_option:
-                found = opt.data
-                break
+        self._current_rifugio = selected_option
+        print(f'rifugio selezionato dal dd:  {selected_option}')
+        self.handle_raggiungibili(e)
 
-        self._current_rifugio = found
-        print("Rifugio selezionato:", self._current_rifugio)
-        '''
+
